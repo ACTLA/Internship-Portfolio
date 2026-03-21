@@ -1,0 +1,91 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+pip-wheel-metadata/
+
+# C#
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.pidb
+*.scc
+*.DotSettings.user
+*.dll
+*.exe
+*.pdb
+
+# IDE
+.idea/
+.vs/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# mypy
+.mypy_cache/
+
+# Скриншоты и временные файлы
+*.png
+*.jpg
+*.jpeg
+*.bmp
+screenshot_*.png
+
+# Базы данных
+*.db
+*.sqlite
+*.sqlite3
+
+# Отчёты
+*.pdf
+report*.pdf
+
+# Ключи и секреты
+*.pem
+*.key
+*.sig
+private_key*
+*_private*
+
+# Архивы
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+# Ключи и сертификаты
+*.pem
+*.key
+*.sig
+*_private*
+*.p12
+*.pfx

@@ -1,0 +1,4 @@
+scapy>=2.5.0
+colorama>=0.4.6
+psutil>=5.9.0
+netifaces>=0.11.0

@@ -1,0 +1,37 @@
+# Основные зависимости для портфолио
+# Компьютерное зрение
+opencv-python>=4.5.0
+face-recognition>=1.3.0
+dlib>=19.22.0
+Pillow>=9.0.0
+# GUI
+PyQt5>=5.15.0
+# Криптография
+cryptography>=41.0.0
+pycryptodome>=3.19.0
+rsa>=4.9
+# Данные и математика
+numpy>=1.21.0
+scipy>=1.11.0
+pandas>=2.0.0
+matplotlib>=3.4.0
+# Веб-автоматизация
+selenium>=4.10.0
+beautifulsoup4>=4.12.0
+requests>=2.31.0
+lxml>=4.9.0
+# Отчёты
+reportlab>=4.0.0
+PyPDF2>=3.0.0
+# Сети
+scapy>=2.5.0
+psutil>=5.9.0
+netifaces>=0.11.0
+# Утилиты
+tabulate>=0.9.0
+networkx>=3.0
+chardet>=5.0.0
+python-whois>=0.8.0
+reedsolo>=1.7.0
+# Тестирование
+pytest>=7.0.0
