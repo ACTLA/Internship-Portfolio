@@ -1,69 +1,66 @@
-x_0 = 1
-a = 9
-c = 12
-m = 137
-
-def func_parity_check(n):  # Проверка на чётность/нечетность
-    n_bin = format(n, '#010b')
-    n_str = str(n_bin[2:])
-
-    if n_str[7] == "0":
-        return int(1)
-    else:
-        return int(0)
+def xor(a, b):
+    # Функция XOR для двух бинарных строк
+    return ''.join(str(int(x) ^ int(y)) for x, y in zip(a, b))
 
 
-def func_conciders(n):  # Счёт количества нулей
-    count_zero = 0
-    n_bin = format(n, '#010b')
-    n_str = str(n_bin[2:])
+def crc(data, generating_polynomial):
+    # Функция для вычисления CRC
+    gx_len = len(generating_polynomial)
+    data += '0' * gx_len
+    num = data[:gx_len]
 
-    for i in range(len(n_str)):
-        if n_str[i] == "0":
-            count_zero += 1
-    return count_zero
+    if len(str(int(data))) < gx_len:
+        return str(int(num))
 
-
-def func():
-    count_zero = 0
-    count_one = 0
-    count_ch = 0
-    l_t = 0
-
-    count_ch += func_parity_check(x_0)
-
-    x_bin = format(x_0, '#010b')
-    x_str = str(x_bin[2:])
-    buf = func_conciders(x_0)
-    count_one += len(x_str) - buf
-    count_zero += buf
-
-    print(f"x_{l_t} =", x_0, "|", x_str, "\n")
-
-    x = x_0
+    data = data.replace(data[:gx_len], "", 1)
 
     while True:
-        x = (a * x + c) % m
+        remainder = str(int(xor(num, generating_polynomial)))
 
-        if x == x_0:
-            break
+        if remainder == '0':
+            if len(data) <= gx_len and int(data) == 0:
+                return remainder
 
-        count_ch += func_parity_check(x)
+            num = data[:gx_len]
+            data = data.replace(data[:gx_len], "", 1)
 
-        x_bin = format(x, '#010b')
-        x_str = str(x_bin[2:])
-        buf = func_conciders(x)
-        count_one += len(x_str) - buf
-        count_zero += buf
+            if len(num) < gx_len:
+                return num
+        else:
+            remainder_len = gx_len - len(remainder)
+            num = remainder + data[:remainder_len]
+            data = data.replace(data[:remainder_len], "", 1)
 
-        l_t += 1
-        print(f"x_{l_t} =", x, "|", x_str, "\n")
-
-    print("Длина периода генератора в битах: ", (l_t + 1) * 8, "\n")
-    print("Количество чётных чисел: ", count_ch, "\n")
-    print("Количество нечётных чисел: ", l_t - count_ch + 1, "\n")
-    print("Количество нулей: ", count_zero, "\n")
-    print("Количество единиц:", count_one)
+            if len(num) < gx_len:
+                return num
 
 
-func()
+def detect_crc_collision(iterations, generating_polynomial):
+    # Функция для обнаружения коллизий CRC
+    collisions = {}
+
+    for num in range(iterations):
+        temp = crc(bin(num)[2:], generating_polynomial)
+
+        if temp in collisions:
+            collisions[temp].append(num)
+        else:
+            collisions[temp] = [num]
+
+    return collisions
+
+
+def dict_output(dictionary):
+    # Функция для вывода словаря в отсортированном порядке
+    for key, items in sorted(dictionary.items()):
+        print(f"Хэш: {key} || Числа: {items}")
+
+
+if __name__ == '__main__':
+    generating_polynomial = "111"  # Полином для генерации CRC
+    input_data = "10101010"  # Входные данные
+    print(f'CRC от {input_data} =', crc(input_data, generating_polynomial))
+
+    collisions = detect_crc_collision(256, generating_polynomial)
+    print("Коллизии:")
+    dict_output(collisions)

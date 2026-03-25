@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EncodingConverterApp.MainPage">
+
+    <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto" RowSpacing="20" Padding="20, 0, 20, 0">
+        <Label 
+                Padding="10"
+                Text="Конвертер кодировок"
+                VerticalOptions="CenterAndExpand"
+                HorizontalOptions="Center"
+                FontSize="14"
+                Grid.Row="0"/>
+        <Picker
+                x:Name="targetEncodingPicker"
+                Title="Выберите кодировку"
+                SelectedIndexChanged="OnTargetEncodingPickerSelectedIndexChanged"
+                Grid.Row="1">
+            <Picker.ItemsSource>
+                <x:Array Type="{x:Type x:String}">
+                    <x:String>CP1251</x:String>
+                    <x:String>CP10007</x:String>
+                    <x:String>CP866</x:String>
+                    <x:String>ISO-8859-5</x:String>
+                </x:Array>
+            </Picker.ItemsSource>
+        </Picker>
+        <Button
+                x:Name="selectFileButton"
+                Text="Выбрать файл"
+                Clicked="OnSelectFileClicked"
+                VerticalOptions="CenterAndExpand"
+                Grid.Row="2"/>
+        <Label
+                x:Name="filePathLabel"
+                Text="Файл не выбран"
+                FontSize="14"
+                HorizontalOptions="Center"
+                VerticalOptions="CenterAndExpand"
+                Grid.Row="3"/>
+        <Button
+                Margin="0,50,0,0"
+                Text="Преобразовать"
+                Clicked="OnConvertButtonClicked"
+                IsEnabled="False"
+                x:Name="convertButton"
+                Grid.Row="4"/>
+    </Grid>
+</ContentPage>

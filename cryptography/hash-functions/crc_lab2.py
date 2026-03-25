@@ -1,68 +1,73 @@
-s_1, s_2, s_3 = -1, -3, -8  # Номер
+# порождающий многочлен
+g_x = '1011'  # G(x) = 1+x+x3
+# словарь для хранения значений CRC-функции и сообщений, которые дают это значение
+ans = {
+    '0': [],
+    '1': [],
+    '10': [],
+    '11': [],
+    '100': [],
+    '101': [],
+    '110': [],
+    '111': [],
+}
 
 
-def solution(text):  # Последовательности на разбиение на строки по 8 бит
-    a = [text[i:i + 8] for i in range(0, len(text), 8)]
-    return a
+# функция для преобразования сообщения и вызова хеш-функции
+def hash(message):
+    # пока в начале сообщения стоят 0, будем их убирать
+    while len(message) > 0 and message[0] == '0':
+        message = message[1:]
+
+    # добавляем в конец N нулей, то есть домножаем многочлен на x^N, где N - длина g_x
+    message = message + '0'*(len(g_x))
+
+    return crc(message)  # вызываем хеш-функцию и возвращаем её результат
 
 
-def count_ch(a):  # Четность нечетность внутри массива с подстроками
-    count_cht = 0
-    for i in range(len(a)):
-        for j in range(len(a[i])):
-            if j % 8 == 7 and a[i][j] == "0":
-                count_cht += 1
-    return count_cht
+# хеш-функция CRC
+def crc(message):
+    n = len(g_x)  # инициализируем n - количество битов, которыми нужно дополнить d
+    d = ''  # инициализируем d - битовая последовательность длины N, которая используется для вычисления функции
+    # пока длина d и длина оставшегося сообщения >= длины порождающего многочлена,
+    # то есть пока не найдём остаток - число меньшей длины, чем N, делаем вычисления
+    while len(message) + len(d) >= len(g_x):
+        # если d и оставшееся сообщение не содержат 1, тоесть нулевые,
+        # тогда остаток нулевой, значит значение функции равно 0
+        if message.count('1') + d.count('1') == 0:
+            return '0'
+
+        d += message[0: n]  # добавляем к d n битов из message
+        message = message[n:]  # убираем из message биты, добавление к d
+        # пока вначале d стоят 0, убираем их и добавляем в конец биты из message, откуда их убираем
+        while len(d) > 0 and d[0] == '0':
+            d = d[1:]
+            d += message[0]
+            message = message[1:]
+
+        res = ''  # инициализируем res - результат побитового XOR d и g_x
+        for i in range(0, len(d)):
+            res += str(int(d[i]) ^ int(g_x[i]))  # побитовый XOR
+
+        # пока вначале res стоят 0, убираем их
+        while len(res) > 0 and res[0] == '0':
+            res = res[1:]
+        d = res  # записываем в d результат побитового XOR, без 0 в начале
+        n = len(g_x) - len(res)  # записываем в n число недостающих битов
+
+    return d + message  # остаток определяется как последнее значение + оставшиеся биты в message
 
 
-def func_conciders(y):  # Счёт количества нулей
-    count_zero = 0
-    for i in range(len(y)):
-        if y[i] == "0":
-            count_zero += 1
-    return count_zero
+# перебираем все однобайтовые числа
+for num in range(0, 256):
+    bait = format(num, '08b')  # переводим в битовую строку длины 8
+    result = hash(bait)  # вызываем функцию и получаем её результат
+    ans[result].append(num)  # по этому результату добавляем число в словарь
 
+# вывод словаря значений CRC
+print("Список всех значений функции CRC и соответствующих им сообщений.")
+for key in ans.keys():
+    items = ans[key]
+    print(f"{key}: {items}")
 
-def main_func():
-    count = 1  # Общий счётчик (начинается с одного т.к первый элемент обрабатывается вне цикла)
-    i = 1  # Ещё один счётчик
-    bin_i = "11010101"  # Начальное состояние регистра;
-
-    print(f"\nНачальное состояние регистра = {bin_i}\n")
-    print("Шаг".ljust(3), "||", "Cостояние".center(3), "||", "Посчитанный.Бит".center(3), "||",
-          "Вытолкнутый.Бит".rjust(3))  # Шапка таблицы
-
-    # Обработка нулевого элемента вне цикла:
-
-    a_0 = str((int(bin_i[s_1]) + int(bin_i[s_2]) + int(bin_i[s_3])) % 2)
-
-    gen_bit = bin_i[7]  # Массив хранящий вытесненые биты
-    buf = a_0 + bin_i[0:7]
-
-    print(f"{count}".ljust(3), "||", f"{buf}".center(3), " ||", f"{a_0}".center(15), "||", f"{gen_bit}".rjust(3))
-
-    while True:
-
-        a = str((int(buf[s_1]) + int(buf[s_2]) + int(buf[s_3])) % 2)
-
-        count += 1
-        gen_bit += buf[7]
-        buf = a + buf[0:7]
-
-        print(f"{count}".ljust(3), "||", f"{buf}".center(3), " ||", f"{a}".center(15), "||",
-              f"{gen_bit[i]}".rjust(3))
-
-        i += 1
-
-        if bin_i == buf:
-            break
-
-    print(f"\nПериод последовательности в битах: {count}")
-    print(f"Количество чётных чисел: {count_ch(solution(gen_bit))}")
-    print(f"Количество нечётных чисел: {int(((count - (count % 8)) / 8) - count_ch(solution(gen_bit)))}")
-    print(f"Количество нулей: {func_conciders(gen_bit)}")
-    print(f"Количество единиц: {count - func_conciders(gen_bit)}")
-    print(f"Последовательность: {solution(gen_bit)}")
-
-
-main_func()
+print(hash("10101010"))
